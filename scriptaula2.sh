@@ -29,27 +29,27 @@ while true; do
 
         case $option in
         1)
-         echo "[+] Buscando possíveis ataques XSS..."
+         echo "[+] Detectando possíveis ataques XSS..."
          grep -iE "<script|%3Cscript" "$file"
          ;;
         2)
-         echo "[+] Buscando possíveis tentativas de SQL Injection..."
+         echo "[+] Detectando possíveis tentativas de SQL Injection..."
          grep -iE "union|select|insert|drop|%27|%22" "$file"
          ;;
         3)
-         echo "[+] Buscando tentativas de Directory Traversal..."
+         echo "[+] Detectando tentativas de Directory Traversal..."
          grep -E "\.\./|\.\.%2f" "$file"
          ;;
         4)
-         echo "[+] Buscando User-Agents suspeitos (ferramentas de scanner)..."
+         echo "[+] Detectando User-Agents suspeitos (ferramentas de scanner)..."
          grep -iE "nikto|nmap|sqlmap|acunetix|curl|masscan|python" "$file"
          ;;
         5)
-         echo "[+] Buscando acesso a arquivos sensíveis (.env, .git, etc.)..."
+         echo "[+] Detectando acesso a arquivos sensíveis (.env, .git, etc.)..."
          grep -iE "\.env|\.git|\.htaccess|\.bak" "$file"
          ;;
         6)
-         echo "[+] Listando IPs com mais erros 404 (possível brute force)..."
+         echo "[+] Listando IPs erros 404 (possível brute force)..."
          grep " 404 " "$file" | cut -d " " -f 1 | sort | uniq -c | sort -nr | head
          ;;
         7)
@@ -58,28 +58,29 @@ while true; do
          grep "$ip" "$file" | head -n1
          echo "[+] Último acesso do IP $ip:"
          grep "$ip" "$file" | tail -n1
-      ;;
-    8)
-      read -p "Informe o IP suspeito: " ip
-      echo "[+] User-Agent(s) do IP $ip:"
-      grep "$ip" "$file" | cut -d '"' -f6 | sort | uniq
-      ;;
-    9)
-      echo "[+] Listando IPs e número de requisições:"
-      cut -d " " -f1 "$file" | sort | uniq -c | sort -nr
-      ;;
-    10)
-      read -p "Informe o nome do arquivo sensível (ex: .env): " arq
-      echo "[+] Buscando acessos ao arquivo $arq:"
-      grep "$arq" "$file"
-      ;;
-    0)
-      echo "Saindo..."
-      break
-      ;;
-    *)
-      echo "Opção inválida. Tente novamente."
-      ;;
+         ;;
+        8)
+         echo "[+] Localizar user-agent utilizado por um IP suspeito"       
+         read -p "Informe o IP suspeito: " ip
+         echo "[+] User-Agent(s) do IP $ip:"
+         grep "$ip" "$file" | cut -d '"' -f6 | sort | uniq
+         ;;
+        9)
+         echo "[+] Listando IPs e número de requisições:"
+         cut -d " " -f1 "$file" | sort | uniq -c | sort -nr
+         ;;
+        10)
+         read -p "Informe o nome do arquivo sensível (ex: .env): " arq
+         echo "[+] Buscando acessos ao arquivo $arq:"
+         grep "$arq" "$file"
+         ;;
+        0)
+         echo "Saindo..."
+         break
+         ;;
+        *)
+         echo "Opção inválida. Tente novamente."
+         ;;
   esac
   echo ""
   read -p  "Pressione ENTER para continuar..."
